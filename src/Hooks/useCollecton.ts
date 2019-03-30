@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebase/firebase";
-import { IDoc } from "../interfaces";
 
 const useCollection = (
   path: string,
   orderBy?: undefined | "createdAt"
-): IDoc[] => {
-  const [docs, setDocs] = useState([] as IDoc[]);
+): any[] => {
+  const [docs, setDocs] = useState([] as any[]);
 
   useEffect(() => {
     let collection = db.collection(path);
@@ -14,14 +13,10 @@ const useCollection = (
     if (orderBy) collection.orderBy(orderBy);
 
     return collection.onSnapshot(ss => {
-      const docs: IDoc[] = [];
+      const docs: any[] = [];
       ss.forEach(doc => {
-        const { text, createdAt } = doc.data();
-        docs.push({
-          text,
-          createdAt,
-          id: doc.id
-        });
+        const data = doc.data();
+        docs.push(data);
       });
       setDocs(docs);
     });
