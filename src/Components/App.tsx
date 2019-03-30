@@ -2,46 +2,77 @@ import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
 import Channel from "./Channel";
 import useCollecton from "../Hooks/useCollecton";
-import firebase from "../firebase/firebase";
+import firebase, { db } from "../firebase/firebase";
+import { IUser } from "../interfaces";
 
-interface IUser {
-  displayName: string;
-  photoURL: string;
-  uid: string;
-}
-
-const App: React.FunctionComponent = () => {
+const useAuth: Function = (): IUser | null => {
   const [user, setUser] = useState(null as IUser | null);
-  const channels = useCollecton("channels");
 
   useEffect(() => {
-    return firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        const { displayName, photoURL, uid } = user;
-        setUser({
-          displayName: displayName || "",
-          photoURL: photoURL || "",
-          uid
-        });
-      } else setUser(null);
+    return firebase.auth().onAuthStateChanged(firebaseUser => {
+      if (firebaseUser) {
+        const user: IUser = {
+          displayName: firebaseUser.displayName || "",
+          photoURL: firebaseUser.photoURL || "",
+          uid: firebaseUser.uid
+        };
+
+        setUser(user);
+
+        db.collection("users")
+          .doc(user.uid)
+          .set(user, { merge: true });
+      } else {
+        setUser(null);
+      }
     });
   }, []);
 
+  return user;
+};
+
+const Login: React.FunctionComponent = () => {
+  const [error, setError] = useState(null as any);
+
   const handleSignIn = async (): Promise<void> => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    await firebase.auth().signInWithPopup(provider);
+    try {
+      await firebase.auth().signInWithPopup(provider);
+    } catch (err) {
+      setError(err);
+    }
   };
 
-  return user ? (
-    <div className="App">
-      <Nav channels={channels} />
-      <Channel />
-    </div>
-  ) : (
+  return (
     <div className="Login">
       <h1>Charlie Chat</h1>
       <button onClick={handleSignIn}>Sign in with Google</button>
+      {error && (
+        <>
+          <p>
+            <strong>Sorry, there was a problem</strong>
+          </p>
+          <p>
+            <i>{error.message}</i>
+          </p>
+          <p>Please try again!</p>
+        </>
+      )}
     </div>
+  );
+};
+
+const App: React.FunctionComponent = () => {
+  const channels = useCollecton("channels");
+  const user = useAuth();
+
+  return user ? (
+    <div className="App">
+      <Nav user={user} channels={channels} />
+      <Channel user={user} />
+    </div>
+  ) : (
+    <Login />
   );
 };
 

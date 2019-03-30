@@ -1,6 +1,6 @@
 import React from "react";
 
-const Members = React.memo(function(props) {
+const Members: React.FunctionComponent = () => {
   return (
     <div className="Members">
       <div>
@@ -15,6 +15,6 @@ const Members = React.memo(function(props) {
       </div>
     </div>
   );
-});
+};
 
 export default Members;

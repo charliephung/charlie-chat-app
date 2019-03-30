@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { db } from "../firebase/firebase";
+import { IMessage, IUser } from "../interfaces";
 
-interface IMessage {
-  text: string;
-  createdAt: Date;
+interface IProps {
+  user: IUser;
 }
 
-const ChatInputBox: React.FunctionComponent = React.memo(props => {
+const ChatInputBox: React.FunctionComponent<IProps> = ({ user }) => {
   const [message, setMessage] = useState("");
 
   const onChange = (event: React.FormEvent<HTMLInputElement>): void => {
@@ -18,7 +18,8 @@ const ChatInputBox: React.FunctionComponent = React.memo(props => {
     event.preventDefault();
     const newMessage: IMessage = {
       text: message,
-      createdAt: new Date()
+      createdAt: new Date(),
+      user: db.collection("users").doc(user.uid)
     };
     db.collection("channels/general/messages")
       .add(newMessage)
@@ -35,6 +36,6 @@ const ChatInputBox: React.FunctionComponent = React.memo(props => {
       />
     </form>
   );
-});
+};
 
 export default ChatInputBox;

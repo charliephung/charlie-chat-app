@@ -3,18 +3,23 @@ import ChannelInfo from "./ChannelInfo";
 import Messages from "./Messages";
 import ChatInputBox from "./ChatInputBox";
 import Members from "./Members";
+import { IUser } from "../interfaces";
 
-const Channel = React.memo(function(props) {
+interface IProps {
+  user: IUser;
+}
+
+const Channel: React.FunctionComponent<IProps> = ({ user }) => {
   return (
     <div className="Channel">
       <div className="ChannelMain">
         <ChannelInfo />
         <Messages />
-        <ChatInputBox />
+        <ChatInputBox user={user} />
       </div>
       <Members />
     </div>
   );
-});
+};
 
 export default Channel;

@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChannelInfo = React.memo(function(props) {
+const ChannelInfo: React.FunctionComponent = () => {
   return (
     <div className="ChannelInfo">
       <div className="Topic">
@@ -9,6 +9,6 @@ const ChannelInfo = React.memo(function(props) {
       <div className="ChannelName">#general</div>
     </div>
   );
-});
+};
 
 export default ChannelInfo;

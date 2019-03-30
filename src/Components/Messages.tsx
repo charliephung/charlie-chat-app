@@ -1,7 +1,7 @@
 import React from "react";
 import useCollection from "../Hooks/useCollecton";
 
-const Messages: React.FunctionComponent = React.memo(function(props) {
+const Messages: React.FunctionComponent = () => {
   const messages = useCollection("channels/general/messages", "createdAt");
 
   return (
@@ -36,6 +36,6 @@ const Messages: React.FunctionComponent = React.memo(function(props) {
       })}
     </div>
   );
-});
+};
 
 export default Messages;
