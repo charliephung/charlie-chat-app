@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { db } from "../firebase/firebase";
+import { IDoc } from "../interfaces";
 
-interface IDoc {
-  text: string;
-  id: string;
-  createdAt: Date;
-}
 const useCollection = (
   path: string,
   orderBy?: undefined | "createdAt"
