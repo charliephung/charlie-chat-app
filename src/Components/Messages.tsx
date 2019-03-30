@@ -1,13 +1,19 @@
 import React from "react";
 import useCollection from "../Hooks/useCollecton";
+import { IMessage } from "../interfaces";
 
 const Messages: React.FunctionComponent = () => {
-  const messages = useCollection("channels/general/messages", "createdAt");
+  const messages: IMessage[] = useCollection(
+    "channels/general/messages",
+    "createdAt"
+  );
 
   return (
     <div className="Messages">
       <div className="EndOfMessages">That's every message!</div>
       {messages.map((message, index) => {
+        console.log(message.user.path);
+
         return index === 0 ? (
           <div key={index}>
             <div className="Day">
