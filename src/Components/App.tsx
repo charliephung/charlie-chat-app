@@ -3,7 +3,7 @@ import Nav from "./Nav";
 import Channel from "./Channel";
 import useCollecton from "../Hooks/useCollecton";
 import firebase, { db } from "../firebase/firebase";
-import { IUser } from "../interfaces";
+import { IUser, IChannel } from "../types";
 
 const useAuth: Function = (): IUser | null => {
   const [user, setUser] = useState(null as IUser | null);
@@ -32,7 +32,7 @@ const useAuth: Function = (): IUser | null => {
 };
 
 const Login: React.FunctionComponent = () => {
-  const [error, setError] = useState(null as any);
+  const [error, setError] = useState<any | null>(null);
 
   const handleSignIn = async (): Promise<void> => {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -63,9 +63,8 @@ const Login: React.FunctionComponent = () => {
 };
 
 const App: React.FunctionComponent = () => {
-  const channels = useCollecton("channels");
+  const channels = useCollecton<IChannel>("channels");
   const user = useAuth();
-
   return user ? (
     <div className="App">
       <Nav user={user} channels={channels} />

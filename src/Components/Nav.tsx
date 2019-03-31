@@ -1,6 +1,6 @@
 import React from "react";
 import firebase from "../firebase/firebase";
-import { IChannel, IUser } from "../interfaces";
+import { IChannel, IUser } from "../types";
 
 interface IProps {
   channels: IChannel[];
