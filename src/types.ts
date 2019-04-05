@@ -1,4 +1,4 @@
-import { DocumentReference } from "@firebase/firestore-types";
+import { DocumentReference, Timestamp } from "@firebase/firestore-types";
 
 export type IUser = {
   displayName: string;
@@ -8,10 +8,11 @@ export type IUser = {
 
 export type IMessage = {
   text: string;
-  createdAt: Date;
+  createdAt: Timestamp;
   user: DocumentReference;
 };
 
 export type IChannel = {
   id: string;
+  topic: string;
 };
