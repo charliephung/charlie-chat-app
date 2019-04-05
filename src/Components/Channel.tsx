@@ -4,18 +4,24 @@ import Messages from "./Messages";
 import ChatInputBox from "./ChatInputBox";
 import Members from "./Members";
 import { IUser } from "../types";
+import { RouteComponentProps } from "@reach/router";
 
-interface IProps {
+type Props = {
   user: IUser;
-}
+  path: string;
+};
+type ChannelProps = Props & RouteComponentProps<{ channelId?: string }>;
 
-const Channel: React.FunctionComponent<IProps> = ({ user }) => {
+const Channel: React.FunctionComponent<ChannelProps> = ({
+  channelId = "",
+  user
+}) => {
   return (
     <div className="Channel">
       <div className="ChannelMain">
-        <ChannelInfo topic="Not Yet" />
-        <Messages />
-        <ChatInputBox user={user} />
+        <ChannelInfo channelId={channelId} />
+        <Messages channelId={channelId} />
+        <ChatInputBox user={user} channelId={channelId} />
       </div>
       <Members />
     </div>
