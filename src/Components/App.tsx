@@ -4,6 +4,7 @@ import Channel from "./Channel";
 import useCollecton from "../Hooks/useCollecton";
 import firebase, { db } from "../firebase/firebase";
 import { IUser, IChannel } from "../types";
+import { Router, Redirect } from "@reach/router";
 
 const useAuth: Function = (): IUser | null => {
   const [user, setUser] = useState(null as IUser | null);
@@ -68,7 +69,10 @@ const App: React.FunctionComponent = () => {
   return user ? (
     <div className="App">
       <Nav user={user} channels={channels} />
-      <Channel user={user} />
+      <Router>
+        <Channel path="channel/:channelId" user={user} />
+        <Redirect from="/" to="channel/general" />
+      </Router>
     </div>
   ) : (
     <Login />
