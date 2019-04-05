@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useRef, useEffect, Ref, ReactHTMLElement } from "react";
 import useCollection from "../Hooks/useCollecton";
-import useDoc from "../Hooks/useDoc";
+import useDocWithCache from "../Hooks/useDocWithCache";
 import { IMessage, IUser } from "../types";
+import format from "date-fns/format";
+import isSameDay from "date-fns/is_same_day";
 
 type IMessageWithAvatarProps = {
   message: IMessage;
@@ -12,14 +14,16 @@ const MessageWithAvatar: React.FunctionComponent<IMessageWithAvatarProps> = ({
   message,
   showDay
 }) => {
-  const author = useDoc<IUser>(message.user.path);
+  const author = useDocWithCache<IUser>(message.user.path);
 
   return (
     <div>
       {showDay && (
         <div className="Day">
           <div className="DayLine" />
-          <div className="DayText">12/6/2018</div>
+          <div className="DayText">
+            {new Date(message.createdAt.seconds * 1000).toLocaleDateString()}
+          </div>
           <div className="DayLine" />
         </div>
       )}
@@ -33,7 +37,9 @@ const MessageWithAvatar: React.FunctionComponent<IMessageWithAvatarProps> = ({
         <div className="Author">
           <div>
             <span className="UserName">{author && author.displayName} </span>
-            <span className="TimeStamp">3:37 PM</span>
+            <span className="TimeStamp">
+              {format(message.createdAt.seconds * 1000, "h:mm A")}
+            </span>
           </div>
           <div className="MessageContent">{message.text}</div>
         </div>
@@ -42,20 +48,63 @@ const MessageWithAvatar: React.FunctionComponent<IMessageWithAvatarProps> = ({
   );
 };
 
-const Messages: React.FunctionComponent = () => {
-  const messages: IMessage[] = useCollection(
-    "channels/general/messages",
-    "createdAt"
+type MessagesProps = {
+  channelId: string;
+};
+
+const shouldShowDate = (
+  prev: IMessage | undefined,
+  message: IMessage
+): boolean => {
+  if (prev === undefined) return true;
+
+  const isNextDay = !isSameDay(
+    prev.createdAt.seconds * 1000,
+    message.createdAt.seconds * 1000
   );
 
+  return isNextDay;
+};
+
+const shouldShowAvatar = (
+  prev: IMessage | undefined,
+  message: IMessage
+): boolean => {
+  if (prev === undefined) return true;
+
+  const isDifferentUser = message.user.id !== prev.user.id;
+  if (isDifferentUser) return true;
+
+  const isBeenAWhile = message.createdAt.seconds - prev.createdAt.seconds > 180;
+  if (isBeenAWhile) return true;
+
+  return false;
+};
+
+const useSmartScroll = (ref: React.RefObject<HTMLDivElement>) => {
+  useEffect(() => {
+    const node = ref.current;
+    if (node === null) return;
+    node.scrollTop = node.scrollHeight;
+  });
+};
+
+const Messages: React.FunctionComponent<MessagesProps> = ({ channelId }) => {
+  const messages: IMessage[] = useCollection(
+    `channels/${channelId}/messages`,
+    "createdAt"
+  );
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  useSmartScroll(scrollerRef);
+
   return (
-    <div className="Messages">
+    <div ref={scrollerRef} className="Messages">
       <div className="EndOfMessages">That's every message!</div>
 
       {messages.map((message, index) => {
         const prev = messages[index - 1];
-        const showDay = false;
-        const showAvatar = !prev || message.user.id !== prev.user.id;
+        const showDay = shouldShowDate(prev, message);
+        const showAvatar = shouldShowAvatar(prev, message);
 
         return showAvatar ? (
           <MessageWithAvatar key={index} showDay={showDay} message={message} />
