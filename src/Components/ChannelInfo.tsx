@@ -1,16 +1,20 @@
 import React from "react";
+import useDoc from "../Hooks/useDoc";
+import { IChannel } from "../types";
 
 type Props = {
-  topic: string;
+  channelId: string;
 };
 
-const ChannelInfo: React.FunctionComponent<Props> = ({ topic }) => {
+const ChannelInfo: React.FunctionComponent<Props> = ({ channelId }) => {
+  const channel = useDoc<IChannel>(`channels/${channelId}`);
   return (
     <div className="ChannelInfo">
       <div className="Topic">
-        Topic: <input className="TopicInput" value="Awesome stuff" />
+        Topic:{" "}
+        <input className="TopicInput" defaultValue={channel && channel.topic} />
       </div>
-      <div className="ChannelName"># {topic}</div>
+      <div className="ChannelName"># {channelId}</div>
     </div>
   );
 };
