@@ -1,6 +1,7 @@
 import React from "react";
 import firebase from "../firebase/firebase";
 import { IChannel, IUser } from "../types";
+import { Link } from "@reach/router";
 
 interface IProps {
   channels: IChannel[];
@@ -26,9 +27,9 @@ const Nav: React.FunctionComponent<IProps> = ({ channels, user }) => {
       </div>
       <nav className="ChannelNav">
         {channels.map(({ id }) => (
-          <a key={id} href={`/channel/${id}`}>
+          <Link key={id} to={`/channel/${id}`}>
             # {id}
-          </a>
+          </Link>
         ))}
       </nav>
     </div>
