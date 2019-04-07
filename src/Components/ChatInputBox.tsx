@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { db } from "../firebase/firebase";
-import { IMessage, IUser } from "../types";
+import { TMessage, TUser } from "../types";
 import { firestore } from "firebase";
 
 type Props = {
   channelId: string;
-  user: IUser;
+  user: TUser;
 };
 
 const ChatInputBox: React.FunctionComponent<Props> = ({ user, channelId }) => {
@@ -19,7 +19,7 @@ const ChatInputBox: React.FunctionComponent<Props> = ({ user, channelId }) => {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!message) return;
-    const newMessage: IMessage = {
+    const newMessage: TMessage = {
       text: message,
       createdAt: firestore.Timestamp.fromDate(new Date()),
       user: db.collection("users").doc(user.uid)

@@ -3,16 +3,16 @@ import Nav from "./Nav";
 import Channel from "./Channel";
 import useCollecton from "../Hooks/useCollecton";
 import firebase, { db } from "../firebase/firebase";
-import { IUser, IChannel } from "../types";
+import { TUser, TChannel } from "../types";
 import { Router, Redirect } from "@reach/router";
 
-const useAuth: Function = (): IUser | null => {
-  const [user, setUser] = useState(null as IUser | null);
+const useAuth: Function = (): TUser | null => {
+  const [user, setUser] = useState(null as TUser | null);
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged(firebaseUser => {
       if (firebaseUser) {
-        const user: IUser = {
+        const user: TUser = {
           displayName: firebaseUser.displayName || "",
           photoURL: firebaseUser.photoURL || "",
           uid: firebaseUser.uid
@@ -64,7 +64,7 @@ const Login: React.FunctionComponent = () => {
 };
 
 const App: React.FunctionComponent = () => {
-  const channels = useCollecton<IChannel>("channels");
+  const channels = useCollecton<TChannel>("channels");
   const user = useAuth();
   return user ? (
     <div className="App">

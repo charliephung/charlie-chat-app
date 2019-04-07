@@ -1,4 +1,5 @@
 import firebase from "firebase/app";
+import "firebase/database";
 import "firebase/firestore";
 import "firebase/auth";
 
@@ -14,6 +15,18 @@ const config = {
 firebase.initializeApp(config);
 
 const db = firebase.firestore();
+const realTimeDb = firebase.database();
+
+export function setupPresence(user: any) {
+  realTimeDb
+    .ref(".info/connected")
+    .on(
+      "value",
+      (snapshot: firebase.database.DataSnapshot | null | undefined) => {
+        if (snapshot) console.log(snapshot.val());
+      }
+    );
+}
 
 export default firebase;
 export { db };

@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ChannelInfo from "./ChannelInfo";
 import Messages from "./Messages";
 import ChatInputBox from "./ChatInputBox";
 import Members from "./Members";
-import { IUser } from "../types";
+import { TUser } from "../types";
+import { db } from "../firebase/firebase";
 import { RouteComponentProps } from "@reach/router";
 
 type Props = {
-  user: IUser;
+  user: TUser;
   path: string;
 };
 type ChannelProps = Props & RouteComponentProps<{ channelId?: string }>;
@@ -16,6 +17,12 @@ const Channel: React.FunctionComponent<ChannelProps> = ({
   channelId = "",
   user
 }) => {
+  useEffect(() => {
+    db.doc(`users/${user.uid}`).update({
+      [`channels.${channelId}`]: true
+    });
+  }, [user.uid, channelId]);
+
   return (
     <div className="Channel">
       <div className="ChannelMain">
@@ -23,7 +30,7 @@ const Channel: React.FunctionComponent<ChannelProps> = ({
         <Messages channelId={channelId} />
         <ChatInputBox user={user} channelId={channelId} />
       </div>
-      <Members />
+      <Members channelId={channelId} />
     </div>
   );
 };

@@ -1,18 +1,23 @@
 import { DocumentReference, Timestamp } from "@firebase/firestore-types";
 
-export type IUser = {
+export type TUser = {
   displayName: string;
   photoURL: string;
   uid: string;
 };
 
-export type IMessage = {
+export type TMessage = {
   text: string;
   createdAt: Timestamp;
   user: DocumentReference;
 };
 
-export type IChannel = {
+export type TChannel = {
   id: string;
   topic: string;
+};
+
+export type TMember = {
+  displayName: string;
+  id: string;
 };

@@ -1,12 +1,12 @@
-import React, { useRef, useEffect, Ref, ReactHTMLElement } from "react";
+import React, { useRef, useEffect } from "react";
 import useCollection from "../Hooks/useCollecton";
 import useDocWithCache from "../Hooks/useDocWithCache";
-import { IMessage, IUser } from "../types";
+import { TMessage, TUser } from "../types";
 import format from "date-fns/format";
 import isSameDay from "date-fns/is_same_day";
 
 type IMessageWithAvatarProps = {
-  message: IMessage;
+  message: TMessage;
   showDay: boolean;
 };
 
@@ -14,7 +14,7 @@ const MessageWithAvatar: React.FunctionComponent<IMessageWithAvatarProps> = ({
   message,
   showDay
 }) => {
-  const author = useDocWithCache<IUser>(message.user.path);
+  const author = useDocWithCache<TUser>(message.user.path);
 
   return (
     <div>
@@ -53,8 +53,8 @@ type MessagesProps = {
 };
 
 const shouldShowDate = (
-  prev: IMessage | undefined,
-  message: IMessage
+  prev: TMessage | undefined,
+  message: TMessage
 ): boolean => {
   if (prev === undefined) return true;
 
@@ -67,8 +67,8 @@ const shouldShowDate = (
 };
 
 const shouldShowAvatar = (
-  prev: IMessage | undefined,
-  message: IMessage
+  prev: TMessage | undefined,
+  message: TMessage
 ): boolean => {
   if (prev === undefined) return true;
 
@@ -81,24 +81,37 @@ const shouldShowAvatar = (
   return false;
 };
 
-const useSmartScroll = (ref: React.RefObject<HTMLDivElement>) => {
+const ChatScroller: React.FunctionComponent<any> = props => {
+  const ref = useRef<HTMLDivElement>(null);
+  const shouldScrollRef = useRef(true);
+
   useEffect(() => {
+    if (shouldScrollRef.current) {
+      const node = ref.current;
+      if (node === null) return;
+      node.scrollTop = node.scrollHeight;
+    }
+  });
+
+  const handleScroll = () => {
     const node = ref.current;
     if (node === null) return;
-    node.scrollTop = node.scrollHeight;
-  });
+    const { scrollTop, scrollHeight, clientHeight } = node;
+    const atBottom = scrollHeight === clientHeight + scrollTop;
+    shouldScrollRef.current = atBottom;
+  };
+
+  return <div {...props} ref={ref} onScroll={handleScroll} />;
 };
 
 const Messages: React.FunctionComponent<MessagesProps> = ({ channelId }) => {
-  const messages: IMessage[] = useCollection(
+  const messages: TMessage[] = useCollection(
     `channels/${channelId}/messages`,
     "createdAt"
   );
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  useSmartScroll(scrollerRef);
 
   return (
-    <div ref={scrollerRef} className="Messages">
+    <ChatScroller className="Messages">
       <div className="EndOfMessages">That's every message!</div>
 
       {messages.map((message, index) => {
@@ -112,11 +125,11 @@ const Messages: React.FunctionComponent<MessagesProps> = ({ channelId }) => {
           <div key={index}>
             <div className="Message no-avatar">
               <div className="MessageContent">{message.text}</div>
-            </div>
+            </div>{" "}
           </div>
         );
       })}
-    </div>
+    </ChatScroller>
   );
 };
 

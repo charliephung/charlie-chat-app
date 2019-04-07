@@ -1,13 +1,13 @@
 import React from "react";
 import useDoc from "../Hooks/useDoc";
-import { IChannel } from "../types";
+import { TChannel } from "../types";
 
 type Props = {
   channelId: string;
 };
 
 const ChannelInfo: React.FunctionComponent<Props> = ({ channelId }) => {
-  const channel = useDoc<IChannel>(`channels/${channelId}`);
+  const channel = useDoc<TChannel>(`channels/${channelId}`);
   return (
     <div className="ChannelInfo">
       <div className="Topic">

@@ -1,11 +1,11 @@
 import React from "react";
 import firebase from "../firebase/firebase";
-import { IChannel, IUser } from "../types";
+import { TChannel, TUser } from "../types";
 import { Link } from "@reach/router";
 
 interface IProps {
-  channels: IChannel[];
-  user: IUser;
+  channels: TChannel[];
+  user: TUser;
 }
 
 const Nav: React.FunctionComponent<IProps> = ({ channels, user }) => {
